@@ -1,4 +1,3 @@
-import { MidiUtil } from "./midi-util";
 import { CommonEvent } from "./common-event";
 
 export class MidiEvent extends CommonEvent {
@@ -9,7 +8,8 @@ export class MidiEvent extends CommonEvent {
 	public static readonly CONTROLLER         = 0xB0;
 	public static readonly PROGRAM_CHANGE     = 0xC0;
 	public static readonly CHANNEL_AFTERTOUCH = 0xD0;
-    public static readonly PITCH_BEND         = 0xE0;
+	public static readonly PITCH_BEND         = 0xE0;
+	public static readonly IGNORE			  = 0xF0;
 	
 	channel: number = 1;
     param1: number | undefined;
@@ -30,7 +30,7 @@ export class MidiEvent extends CommonEvent {
 	 * @param {number} type - Event type.
 	 */
 	setType(type: number) {
-		if (type < MidiEvent.NOTE_OFF || type > MidiEvent.PITCH_BEND) {
+		if (type < MidiEvent.NOTE_OFF || type > MidiEvent.IGNORE) {
 			throw new Error("Trying to set an unknown event: " + type);
 		}
 		this.type = type;
