@@ -5,12 +5,14 @@
   "scripts": {
     "start": "node ./bin/www",
     "tsc": "tsc",
+    "parse": "ts-node-dev --respawn ./utils/dma-midi-parser.ts",
     "test": "cross-env TS_NODE_FILES=true mocha --exit --require ts-node/register --colors test/**/*.ts",
     "coverage": "nyc npm run test"
   },
   "dependencies": {
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
+    "@types/node": "^13.11.1",
     "chai": "^4.2.0",
     "cookie-parser": "~1.4.4",
     "cross-env": "^7.0.2",
