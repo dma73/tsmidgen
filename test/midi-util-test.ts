@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { MidiUtil } from '../../app/music/midi-util';
+import { MidiUtil } from '../src/midi-util';
 import {describe, it} from 'mocha'
 
 const midi_letter_pitches = { a: 21, b: 23, c: 12, d: 14, e: 16, f: 17, g: 19 } as {

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
-import { MidiFile } from '../../app/music/midi-file';
+import { MidiFile } from '../src/midi-file';
 import {describe, it} from 'mocha'
-import { MidiTrack } from '../../app/music/midi-track';
+import { MidiTrack } from '../src/midi-track';
 
 describe('MidiFile: constants', () => {
     it('HDR_CHUNKID should be MThd', () => {
@@ -44,17 +44,32 @@ describe('MidiFile: empty constructor', () => {
         expect(midiFile.tracks[1]).to.equal(track);
     });
 });
-
-describe('Type script bitwise tests:', () => {
+describe('MidiFile: constructor', () => {
     let midiFile = new MidiFile();
-    it('first 4 bits', () => {
-        const a: number = 0xb3;
-        const b: number = 0xf0;
-        expect(a & b).to.equal(176);
+    midiFile.ticks = 200;
+    const track = new MidiTrack();
+    midiFile.addTrack(track);
+    let midiFile2 = new MidiFile(midiFile);
+    it('tracks should not be empty', () => {
+        expect(midiFile2.tracks.length).to.equal(midiFile.tracks.length);
     });
-    it('last 4 bits', () => {
-        const a: number = 0xb3;
-        const b: number = 0x0f;
-        expect(a & b).to.equal(3);
+    it('ticks should be the same value as passed midifile', () => {
+        expect(midiFile2.ticks).to.equal(midiFile.ticks);
+        expect(midiFile2.ticks).to.equal(200);
     });
 });
+describe('MidiFile: checkTicks - Ticks per beat must be an integer between 1 and 32767', () => {
+    let midiFile = new MidiFile();
+    it('Lower than 1 must throw exception', () => {
+        expect(() => midiFile.checkTicks(0)).to.throw('Ticks per beat must be an integer between 1 and 32767!');
+    })
+    it('Non integer must throw exception', () => {
+        expect(() => midiFile.checkTicks(10.554)).to.throw('Ticks per beat must be an integer between 1 and 32767!');
+    })
+    it('Greater than 32767  must throw exception', () => {
+        expect(() => midiFile.checkTicks(32768)).to.throw('Ticks per beat must be an integer between 1 and 32767!');
+    })
+    it('Valid should not throw exception', () => {
+        expect(midiFile.checkTicks(10000)).to.be.true;
+    })
+})
