@@ -31,10 +31,13 @@ export class MidiTrack {
 	 * @param {CommonEvent} event - The event to add.
 	 * @returns {Track} The current track.
 	 */
-	addEvent(event: CommonEvent) {
+	public addEvent(event: CommonEvent) {
 		this.events.push(event);
 		return this;
 	};
+	public isEmpty(): boolean{
+		return this.events.length === 0;
+	}
 
 	/**
 	 * Add a note-on event to the track.
@@ -48,10 +51,10 @@ export class MidiTrack {
 	 * DEFAULT_VOLUME.
 	 * @returns {Track} The current track.
 	 */
-    noteOn(channel: number, pitch: string | number, time?: number, velocity?: number) {
+    public noteOn(channel: number, pitch: string | number, time?: number, velocity?: number) {
         return this.addNoteOn(channel, pitch, time, velocity);
     }
-	addNoteOn(channel: number, pitch: string | number, time?: number, velocity?: number) {
+	public addNoteOn(channel: number, pitch: string | number, time?: number, velocity?: number) {
 		let p = MidiUtil.ensureMidiPitch(pitch);
 		if (p===undefined){
 			p = 60;
@@ -74,10 +77,10 @@ export class MidiTrack {
 	 * defaults to DEFAULT_VOLUME.
 	 * @returns {Track} The current track.
 	 */
-    noteOff(channel: number, pitch: string | number, time?: number, velocity?: number){
+    public noteOff(channel: number, pitch: string | number, time?: number, velocity?: number){
         return this.addNoteOff(channel, pitch, time, velocity);
     }
-	addNoteOff(channel: number, pitch: string | number, time?: number, velocity?: number) {
+	public addNoteOff(channel: number, pitch: string | number, time?: number, velocity?: number) {
 		this.events.push(new MidiEvent(MidiEvent.NOTE_OFF,time || 0,channel,
 			MidiUtil.ensureMidiPitch(pitch),velocity || MidiUtil.DEFAULT_VOLUME,));
 		return this;
@@ -96,14 +99,14 @@ export class MidiTrack {
 	 * defaults to DEFAULT_VOLUME.
 	 * @returns {Track} The current track.
 	 */
-	addNote(channel: number, pitch: string | number, dur?: number, time?: number, velocity?: number) {
+	public addNote(channel: number, pitch: string | number, dur?: number, time?: number, velocity?: number) {
 		this.noteOn(channel, pitch, time, velocity);
 		if (dur) {
 			this.noteOff(channel, pitch, (time || 0) + (dur || 0), velocity);
 		}
 		return this;
     };
-    note(channel: number, pitch: string | number, dur?: number, time?: number, velocity?: number) {
+    public note(channel: number, pitch: string | number, dur?: number, time?: number, velocity?: number) {
 		return this.addNote(channel,pitch, dur, time, velocity);
 	};
 
@@ -118,7 +121,7 @@ export class MidiTrack {
 	 * defaults to DEFAULT_VOLUME.
 	 * @returns {Track} The current track.
 	 */
-	addChord(channel: number, chord: Array<string | number>, dur?: number, time?: number, velocity?: number) {
+	public addChord(channel: number, chord: Array<string | number>, dur?: number, time?: number, velocity?: number) {
 		if (!Array.isArray(chord) || !chord.length) {
 			throw new Error('Chord must be an array of pitches');
 		}
@@ -126,7 +129,7 @@ export class MidiTrack {
 		this.chordNotesOff(chord, channel, dur, velocity);
 		return this;
 	};
-	addArpeggiatedChord(channel: number, chord: Array<string | number>, dur: number, time: number, delay: number, up: boolean, velocity: number) {
+	public addArpeggiatedChord(channel: number, chord: Array<string | number>, dur: number, time: number, delay: number, up: boolean, velocity: number) {
 		if (!Array.isArray(chord) || !chord.length) {
 			throw new Error('Chord must be an array of pitches');
 		}
@@ -135,7 +138,7 @@ export class MidiTrack {
 		return this;
 	};
 
-	private chordNotesOff(chord: (string | number)[], channel: number, dur: number | undefined, velocity: number | undefined) {
+	public chordNotesOff(chord: (string | number)[], channel: number, dur: number | undefined, velocity: number | undefined) {
 		chord.forEach((note, index) => {
 			if (index === 0) {
 				this.noteOff(channel, note, dur, velocity);
@@ -146,7 +149,7 @@ export class MidiTrack {
 		}, this);
 	}
 
-	private chordNotesOn(chord: (string | number)[], channel: number, time: number | undefined, velocity: number | undefined) {
+	public chordNotesOn(chord: (string | number)[], channel: number, time: number | undefined, velocity: number | undefined) {
 		chord.forEach((note, index) => {
 			if (index === 0) {
 				this.noteOn(channel, note, time, velocity);
@@ -156,7 +159,7 @@ export class MidiTrack {
 			}
 		});
 	}
-	private arpeggiatedChordNotesOn(chord: (string | number)[], channel: number, time: number | undefined, delay: number | undefined, up: boolean | undefined, velocity: number | undefined) {
+	public arpeggiatedChordNotesOn(chord: (string | number)[], channel: number, time: number | undefined, delay: number | undefined, up: boolean | undefined, velocity: number | undefined) {
 		if ( up ){
 			chord = chord.reverse()
 		}
@@ -170,7 +173,7 @@ export class MidiTrack {
 		});
 	}
 
-    chord(channel: number, chord: Array<string | number>, dur?: number, time?: number, velocity?: number) {
+    public chord(channel: number, chord: Array<string | number>, dur?: number, time?: number, velocity?: number) {
     return this.addChord(channel, chord, dur, time, velocity);
     }
 	/**
@@ -182,12 +185,12 @@ export class MidiTrack {
 	 * defaults to 0.
 	 * @returns {Track} The current track.
 	 */
-	setInstrument(channel: number, instrument: number, time?: number) {
+	public setInstrument(channel: number, instrument: number, time?: number) {
 		this.events.push(new MidiEvent(MidiEvent.PROGRAM_CHANGE,
 			time || 0, channel, instrument, 0));
 		return this;
     };
-    instrument(channel: number, instrument: number, time: number){
+    public instrument(channel: number, instrument: number, time: number){
         this.setInstrument(channel, instrument, time);
     }
 
@@ -199,7 +202,7 @@ export class MidiTrack {
 	 * defaults to 0.
 	 * @returns {Track} The current track.
 	 */
-	setTempo(bpm: number, time?: number) {
+	public setTempo(bpm: number, time?: number) {
 		this.events.push(new MetaEvent({
 			type: MetaEvent.TEMPO,
 			data: MidiUtil.mpqnFromBpm(bpm),
@@ -207,7 +210,7 @@ export class MidiTrack {
 		}));
 		return this;
     };
-    tempo(bpm: number, time: number){
+    public tempo(bpm: number, time: number){
         return this.setTempo(bpm, time);
     }
 
@@ -216,44 +219,38 @@ export class MidiTrack {
 	 *
 	 * @returns {Array} The array of serialized bytes.
 	 */
-	toBytes() :number[] {
-		var trackLength = 0;
-		var eventBytes: number[] = [];
-		var startBytes = MidiTrack.START_BYTES;
-		var endBytes   = MidiTrack.END_BYTES;
-
+	public toBytes() :number[] {
+		let trackLength = 0;
+		let eventBytes: number[] = [];
+		let startBytes = MidiTrack.START_BYTES;
+		let endBytes   = MidiTrack.END_BYTES;
+		let rv: number[] = [];
 		this.events.forEach((event) => {
             trackLength += this.addEventBytes(event, eventBytes);
         });
+		if (trackLength > 0){
+			// Add the end-of-track bytes to the sum of bytes for the track, since
+			// they are counted (unlike the start-of-track ones).
+			trackLength += endBytes.length;
 
-		// Add the end-of-track bytes to the sum of bytes for the track, since
-		// they are counted (unlike the start-of-track ones).
-		trackLength += endBytes.length;
-
-		// Makes sure that track length will fill up 4 bytes with 0s in case
-		// the length is less than that (the usual case).
-		var lengthBytes = MidiUtil.str2Bytes(trackLength.toString(16), 4);
-
-		return startBytes.concat(lengthBytes, eventBytes, endBytes);
+			// Makes sure that track length will fill up 4 bytes with 0s in case
+			// the length is less than that (the usual case).
+			let lengthBytes = MidiUtil.str2Bytes(trackLength.toString(16), 4);
+			rv = startBytes.concat(lengthBytes, eventBytes, endBytes);
+		}
+		return rv;
     };
-    addEventBytes(event: CommonEvent, eventBytes: number[]) :number {
-        var bytes = event.toBytes();
+    public addEventBytes(event: CommonEvent, eventBytes: number[]) :number {
+        let bytes = event.toBytes();
         eventBytes.push.apply(eventBytes, bytes);
         return bytes.length;
     };
-    bytes(): number[]{
+    public bytes(): number[]{
         return this.toBytes();
 	}
-	static fromBytes(buffer: Buffer): MidiTrack{
-		const tp = new TrackParser();
-		let rv = new MidiTrack();
-		let evt: CommonEvent = tp.extractEvent(buffer);
-		rv.addEvent(evt);
-		while (evt){
-			rv.addEvent(evt);
-			evt = tp.extractEvent(buffer);
-		};
-		return rv;
+	public static fromBytes(buffer: Buffer): MidiTrack{
+		const tp = new TrackParser(buffer);
+		return tp.parse();
 	}
 }
 
