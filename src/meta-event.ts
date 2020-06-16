@@ -1,4 +1,3 @@
-import { MidiUtil } from "./midi-util";
 import { CommonEvent } from "./common-event";
 
 export class MetaEvent extends CommonEvent {
