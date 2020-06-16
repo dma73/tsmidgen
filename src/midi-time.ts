@@ -8,7 +8,8 @@ export class MidiTime{
         this.rawBytes.forEach((byte) => {
             if (byte > 127){
                 byte -= 128;
-                ticks = ticks >> 7;
+                byte = byte << 7;
+
             }
             ticks = ticks | byte; 
         })
