@@ -31,10 +31,11 @@ export class MidiFile {
 			}
 		}
 	}
-	checkTicks(ticks: number) {
+	checkTicks(ticks: number): boolean {
 		if (ticks <= 0 || ticks >= (1 << 15) || ticks % 1 !== 0) {
 			throw new Error('Ticks per beat must be an integer between 1 and 32767!');
 		}
+		return true;
 	}
 
 	/**
@@ -96,20 +97,29 @@ export class MidiFile {
 		file.ticks = bytes.readUInt16BE(12);
 		let exit = false;
 		console.log(filetype, nroftracks,file.ticks );
+		let index2 : number|undefined = 0;
 		while (!exit){
-			let index = bytes.indexOf("MTrk");
-			let index2 : number|undefined = bytes.indexOf("MTrk",index);
+			let index = bytes.indexOf("MTrk", index2);
+			index2 = bytes.indexOf("MTrk",index + 4);
+			let index3 = bytes.indexOf(new Uint8Array(MidiTrack.END_BYTES),index);
 			let trackData: Buffer;
+			console.log('index', index, 'index2', index2, 'index3', index3 );
+
 			if (index2 > index){
-				trackData = bytes.subarray(index,index2);
+				trackData = bytes.subarray(index + 4,index3);
+				console.log('not last','index', index, 'index2', index2 );
 			} else {
-				trackData = bytes.subarray(index);
+				trackData = bytes.subarray(index + 4, index3);
+				console.log('last','index', index, 'index2', index2 );
 				exit = true;
 			}
 			console.log(trackData);
 			let mt = MidiTrack.fromBytes(trackData);
-			file.addTrack(mt);
+			if (! mt.isEmpty()){
+				file.addTrack(mt);
+			}
 		}
+		console.log('added ',file.tracks.length,' tracks');
 		return file;
 	};
 }
