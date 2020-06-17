@@ -4,19 +4,19 @@ import {describe, it} from 'mocha'
 import { MidiTime } from '../src/midi-time';
 
 describe('MidiTime getTicks should do the opposite of translate tick time', () => {
-    it('if input smaller than 128 return a one byte array with the same value', () => {
+    it('if input smaller than 128 should return the same value', () => {
         const result = MidiUtil.translateTickTime(127);
         let mt = new MidiTime(result);
         console.log(result);
         expect(mt.getTicks()).to.equal(127);
     });
-    it('if equal to 128 return a two byte array with first byte=129 and second byte=0', () => {
+    it('if greater than 127 should return the same value', () => {
         const result = MidiUtil.translateTickTime(140);
         let mt = new MidiTime(result);
         console.log(result);
-        expect(mt.getTicks()).to.equal(140);
+        expect(mt.getTicks()).to.equal(150);
     });
-    it('if equal to 10,000 return a two byte array with first byte=206, second byte=16', () => {
+    it('if equal to 10,000 should return the same value', () => {
         const result = MidiUtil.translateTickTime(10000);
         let mt = new MidiTime(result);
         console.log(result);

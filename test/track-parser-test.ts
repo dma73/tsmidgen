@@ -9,7 +9,7 @@ describe('TrackParser: constructor', () => {
         const result = tp.getBuffer !== undefined;
         expect(result).to.equal(true);
     });
-    it('foffset should start at 0', () => {
+    it('offset should start at 0', () => {
         const result = tp.getBuffer !== undefined;
         expect(result).to.equal(true);
     });
