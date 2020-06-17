@@ -10,7 +10,6 @@ export class TrackParser {
     private eventTypes: Map<number,number> = new Map<number,number>();
     constructor(buffer: Buffer) {
         this.buffer = buffer;
-        console.log('hex buffer',this.buffer);
         this.eventTypes.set(MidiEvent.PROGRAM_CHANGE,1);
         this.eventTypes.set(MidiEvent.CHANNEL_AFTERTOUCH,1);
         this.eventTypes.set(MidiEvent.NOTE_ON,2);
@@ -49,8 +48,7 @@ export class TrackParser {
 			byte = this.readUInt8();
 			rawTime.push(byte);
         }
-        //console.log('rawTime', rawTime);
-		return rawTime;
+        return rawTime;
 	}
 	extractEvent(): CommonEvent|undefined{
         try{
@@ -59,7 +57,6 @@ export class TrackParser {
         let rawTime = this.extractRawTime();
         let time = new MidiTime(rawTime);
         const firstByte = this.readUInt8();
-        //console.log('seqNum', seqNum, 'rawtime:',rawTime, 'first byte' , firstByte.toString(16));
         if (firstByte === 0xFF) {
             event = this.extractMetaEvent(time.getTicks());
         } else {
