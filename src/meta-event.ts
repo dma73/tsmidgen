@@ -77,21 +77,39 @@ export class MetaEvent extends CommonEvent {
 
 		// If data is an array, we assume that it contains several bytes. We
 		// apend them to byteArray.
-		if (Array.isArray(this.data)) {
-			byteArray.push(this.data.length);
-			byteArray.push.apply(byteArray, this.data);
-		} else if (typeof this.data == 'number') {
-			byteArray.push(1, this.data);
-		} else if (this.data !== undefined) {
-			// assume string; may be a bad assumption
-			byteArray.push(this.data.length);
-			var dataBytes = this.data.split('').map(function(x){ return x.charCodeAt(0) });
-			byteArray.push.apply(byteArray, dataBytes);
-		} else {
-			byteArray.push(0);
-		}
+		this.pushData(byteArray);
 
 		return byteArray;
 	};
 
+
+	private pushData(byteArray: number[]) {
+		this.pushByteArray(byteArray);
+		this.pushNumber(byteArray);
+		this.pushString(byteArray);
+		if (this.data === undefined){
+			byteArray.push(0);
+		}
+	}
+
+	private pushString(byteArray: number[]) {
+		if (typeof this.data === 'string') {
+			byteArray.push(this.data.length);
+			var dataBytes = this.data.split('').map(function (x) { return x.charCodeAt(0); });
+			byteArray.push.apply(byteArray, dataBytes);
+		}
+	}
+
+	private pushNumber(byteArray: number[]) {
+		if (typeof this.data === 'number') {
+			byteArray.push(1, this.data);
+		}
+	}
+
+	private pushByteArray(byteArray: number[]) {
+		if (Array.isArray(this.data)) {
+			byteArray.push(this.data.length);
+			byteArray.push.apply(byteArray, this.data);
+		}
+	}
 }

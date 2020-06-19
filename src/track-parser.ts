@@ -117,13 +117,13 @@ export class TrackParser {
     public parse(): MidiTrack{
         let track = new MidiTrack();
 		let size = this.readUInt32();
-		console.log('size', size);
+		//console.log('size', size);
 		if (size > 4){
 			let evt: CommonEvent|undefined = this.extractEvent();
 			while (evt){
 				if (evt.type !== MidiEvent.IGNORE){
 					track.addEvent(evt);
-					console.log('event',evt);
+					//console.log('event',evt);
 				}
 				evt = this.extractEvent();
 			}

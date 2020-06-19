@@ -23,14 +23,11 @@ export class MidiUtil {
      */
     static midiPitchFromNote(n: string): number {
         let pitch = 60;
-        console.log('midiPitchFromNote entry');
         const matches = /([a-g])(#+|b+)?([0-9]+)$/i.exec(n);
-        console.log('midiPitchFromNote', matches);
         if (matches) {
             const note = matches[1].toLowerCase();
             const accidental = matches[2] || '';
             const octave = parseInt(matches[3], 10);
-            console.log('midiPitchFromNote', note, accidental, octave);
             pitch = (12 * octave) + MidiUtil.midi_letter_pitches[note] + (accidental.substr(0, 1) == '#' ? 1 : -1) * accidental.length;
         }
         return pitch;
@@ -175,7 +172,6 @@ export class MidiUtil {
             let chars = i === 0 ? str[i] : str[i - 1] + str[i];
             bytes.unshift(parseInt(chars, 16));
         }
-        console.log('str2Bytes', str, bytes);
         return bytes;
     }
 
