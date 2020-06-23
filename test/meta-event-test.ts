@@ -13,6 +13,11 @@ describe('MetaEvent: toBytes()', () => {
         let hex = toHexString(metaEvent.toBytes());
         expect(hex).to.equal('00 ff 02 01 272e ');
     });
+    it('data type : number[]', () => {
+        let metaEvent = new MetaEvent({time:0,type:MetaEvent.COPYRIGHT,data:[10030]});
+        let hex = toHexString(metaEvent.toBytes());
+        expect(hex).to.equal('00 ff 02 01 272e ');
+    });
     it('data type : string', () => {
         let metaEvent = new MetaEvent({time:0,type:MetaEvent.COPYRIGHT,data:'zdiugd'});
         let hex = toHexString(metaEvent.toBytes());
@@ -25,6 +30,18 @@ describe('MetaEvent: toBytes()', () => {
     });
 });
 
+describe('MetaEvent: Constructor()', () => {
+    it('time : should be zero if not specified', () => {
+        let metaEvent = new MetaEvent({});
+        const result = toHexString(metaEvent.time);
+        expect(result).to.equal('00 ');
+    });
+    it('time : should be a variable size midi time', () => {
+        let metaEvent = new MetaEvent({time:127});
+        const result = toHexString(metaEvent.time);
+        expect(result).to.equal('7f ');
+    });
+});
 describe('MetaEvent: toBytes()', () => {
     it('type : should be specified', () => {
         let metaEvent = new MetaEvent({time:0});

@@ -3,6 +3,7 @@ import { describe, it} from 'mocha'
 import { MidiTrack } from '../src/midi-track';
 import { FileParser } from '../src/file-parser';
 import { MidiFile } from '../src/midi-file';
+import { MidiUtil } from '../src/midi-util';
 
 describe('FileParser: checkFileHeader', () => {
     it('correct file header should return true', () => {
@@ -27,15 +28,30 @@ describe('FileParser: parse', () => {
         let buffer = Buffer.from(mf.toBytes(),'binary');
         expect(buffer.toString()).to.equal(originalBuffer.toString());
     });
+    it('check that empty tracks are removed', () => {
+        const EmptyTrack = [0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x04, 0x00, 0xFF, 0x2F, 0x00];
+        let originalBuffer = createTestBuffer(EmptyTrack);
+        let fp = new FileParser(originalBuffer);
+        let mf = fp.parseFile();
+        let buffer = Buffer.from(mf.toBytes() ,'binary');
+        expect(buffer.toString()).to.equal(createTestBuffer().toString());
+    });
 });
 
-function createTestBuffer(): Buffer{
+function createTestBuffer(additionalData?: number[]): Buffer{
+    const EmptyTrack = [0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x04, 0x00, 0xFF, 0x2F, 0x00];
     let mf = new MidiFile();
     let mt = new MidiTrack();
-    mt.addNote(1,60,128,0,80);
+    let ad = '';
+    if(additionalData){
+        ad = MidiUtil.codes2Str(additionalData);
+    }
+    mt.addNote(1,60,127,0,80);
     mf.addTrack(mt);
     mf.addTrack(mt);
-    let buffer = Buffer.from(mf.toBytes(),'binary');
+    let file: string = mf.toBytes();
+    file += ad;
+    let buffer = Buffer.from(file,'binary');
     return buffer
 }
 function createIncorrectBuffer1(): Buffer{
@@ -44,3 +60,11 @@ function createIncorrectBuffer1(): Buffer{
 function createIncorrectBuffer2(): Buffer{
     return Buffer.from('invalid');
 }
+
+function toHexString(input: string):string{
+    let hex = '';
+    Buffer.from(input, 'binary').forEach((value) => {
+        hex += (value.toString(16).length === 1 ? 0 + value.toString(16) : value.toString(16)) + ' ';
+    });
+    return hex;
+} 

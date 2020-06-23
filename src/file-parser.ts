@@ -5,7 +5,8 @@ export class FileParser {
 	public static readonly ERROR_MSG = 'Invalid Midi File';
 	private buffer: Buffer;
     constructor(buffer: Buffer) {
-        this.buffer = buffer;
+		this.buffer = buffer;
+		//console.log(this.buffer.toString());
     } 
     public parseFile(): MidiFile {
 		let file = new MidiFile();
@@ -15,15 +16,17 @@ export class FileParser {
 		const nroftracks = this.buffer.readUInt16BE(10);
 		file.ticks = this.buffer.readUInt16BE(12);
 		let exit = false;
-		console.log(filetype, nroftracks,file.ticks );
+		//console.log(filetype, nroftracks,file.ticks );
 		let index2 : number|undefined = 0;
 		while (!exit){
 			let index = this.buffer.indexOf('MTrk', index2);
 			index2 = this.buffer.indexOf('MTrk',index + 4);
 			let index3 = this.buffer.indexOf(new Uint8Array(MidiTrack.END_BYTES),index);
 			let trackData: Buffer;
-            trackData = this.buffer.subarray(index + 4, index3);
-            if (index2 <= index) exit = true;
+			trackData = this.buffer.subarray(index + 4, index3);
+            if (index2 <= index){
+				exit = true;
+			}
 			let mt = MidiTrack.fromBytes(trackData);
 			if (! mt.isEmpty()){
 				file.addTrack(mt);

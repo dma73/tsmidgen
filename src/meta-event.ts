@@ -1,5 +1,10 @@
 import { CommonEvent } from "./common-event";
 
+export interface MetaEventParm {
+	time?: number;
+	type?: number;
+	data?: string|Array<number>|number;
+}
 export class MetaEvent extends CommonEvent {
 
     public static readonly SEQUENCE   = 0x00;
@@ -19,7 +24,7 @@ export class MetaEvent extends CommonEvent {
     public static readonly SEQ_EVENT  = 0x7f;
     time: Array<number> = new Array<number>();
     type: number = MetaEvent.SEQUENCE;
-    data: string|Array<number>|undefined;
+    data: string|Array<number>|number|undefined;
 
     /* ******************************************************************
 	 * MetaEvent class
@@ -33,11 +38,11 @@ export class MetaEvent extends CommonEvent {
 	 *  - type [required number] - Type of event.
 	 *  - data [optional array|string] - Event data.
 	 */
-	constructor(params: any) {
+	constructor(params: MetaEventParm) {
 		super();
-		if (!this) return new MetaEvent(params);
-		var p = params || {};
-		this.setTime(params.time);
+		let time = 0;
+		if (params.time) time = params.time;
+		this.setTime(time);
 		this.setType(params.type);
 		this.setData(params.data);
 	};
@@ -47,17 +52,17 @@ export class MetaEvent extends CommonEvent {
 	 *
 	 * @param {number} t - Event type.
 	 */
-	setType (t: number) {
-		this.type = t;
+	setType (t: number | undefined) {
+		if (t) this.type = t;
 	};
 
 	/**
 	 * Set the data associated with the event. May be a string or array of byte
 	 * values.
 	 *
-	 * @param {string|Array} d - Event data.
+	 * @param {string|Array<number>} d - Event data.
 	 */
-	setData (d: string|Array<number>) {
+	setData (d: string|Array<number> | number | undefined) {
 		this.data = d;
 	};
 
@@ -113,3 +118,4 @@ export class MetaEvent extends CommonEvent {
 		}
 	}
 }
+
