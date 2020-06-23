@@ -82,7 +82,7 @@ export class MidiTrack {
     }
 	public addNoteOff(channel: number, pitch: string | number, time?: number, velocity?: number) {
 		this.events.push(new MidiEvent(MidiEvent.NOTE_OFF,time || 0,channel,
-			MidiUtil.ensureMidiPitch(pitch),velocity || MidiUtil.DEFAULT_VOLUME,));
+			MidiUtil.ensureMidiPitch(pitch),velocity || MidiUtil.DEFAULT_VOLUME));
 		return this;
 	};
 
@@ -101,9 +101,7 @@ export class MidiTrack {
 	 */
 	public addNote(channel: number, pitch: string | number, dur?: number, time?: number, velocity?: number) {
 		this.noteOn(channel, pitch, time, velocity);
-		if (dur) {
-			this.noteOff(channel, pitch, (time || 0) + (dur || 0), velocity);
-		}
+		this.noteOff(channel, pitch, (dur || 0), velocity);
 		return this;
     };
     public note(channel: number, pitch: string | number, dur?: number, time?: number, velocity?: number) {
