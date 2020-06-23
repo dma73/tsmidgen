@@ -13,8 +13,8 @@ export class MidiFile {
 	public static readonly HDR_TYPE1 = '\x00\x01';         // Midi Type 1 id
 	public static readonly TICK_ERROR = 'Ticks per beat must be an integer between 1 and 32767!';
 	public static readonly DEFAULT_TICKS = 128;
-	public ticks: number = MidiFile.DEFAULT_TICKS;
-	tracks: MidiTrack[] = [];
+	private ticks: number = MidiFile.DEFAULT_TICKS;
+	private tracks: MidiTrack[] = [];
 
 	/**
 	 * Construct a file object.
@@ -26,13 +26,8 @@ export class MidiFile {
 	 */
 	constructor(config?: MidiFile) {
 		if (config) {
-			if (config.ticks) {
-				this.checkTicks(config.ticks);
-				this.ticks = config.ticks;
-			}
-			if (config.tracks) {
-				this.tracks = config.tracks;
-			}
+			this.setTicks(config.ticks);
+			this.setTracks (config.tracks);
 		}
 	}
 	checkTicks(ticks: number): boolean {
@@ -92,20 +87,31 @@ export class MidiFile {
 
 		return bytes;
 	};
-	private getTrackCount(): string {
+	public getTrackCount(): string {
 		let trackCount = 0;
 		this.tracks.forEach((track) => {
-			if (!track.isEmpty())
-				trackCount++;
+			if (track.isNotEmpty()) trackCount++;
 		});
 		return trackCount.toString();
 	}
 
-	public setTicks(ticks: number) :boolean{
-		if (this.checkTicks(ticks)){
-			this.ticks = ticks;
+	public setTicks(ticks: number){
+		this.checkTicks(ticks);
+		this.ticks = ticks; 
+	}
+	public setTracks(tracks: MidiTrack[]|undefined) :boolean{
+		let rv = false;
+		if (tracks){
+			this.tracks = tracks;
+			rv = true;
 		}
-		return true;
+		return rv;
+	}
+	public getTicks(): number {
+		return this.ticks;
+	}
+	public getTracks(): MidiTrack[]{
+		return this.tracks;
 	}
 	static fromBytes(bytes: Buffer): MidiFile {
 		const fileParser = new FileParser(bytes);

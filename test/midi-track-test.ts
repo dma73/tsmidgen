@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { MidiFile } from '../src/midi-file';
 import {describe, it} from 'mocha'
 import { MidiTrack } from '../src/midi-track';
 import { MidiEvent } from '../src/midi-event';
@@ -36,6 +35,13 @@ describe('MidiTrack:addEvent', () => {
         mt.addEvent(new MidiEvent(MidiEvent.NOTE_ON, 0, 1, 60, 80));
         const result = mt.isEmpty();
         expect(result).to.be.false;
+        expect(mt.isNotEmpty()).to.be.true;
+    });
+    it('track should be empty if no events have been added be empty', () => {
+        let mt = new MidiTrack();
+        const result = mt.isEmpty();
+        expect(result).to.be.true;
+        expect(mt.isNotEmpty()).to.be.false;
     });
     it('fluid syntax should supported', () => {
         let mt = new MidiTrack();
@@ -43,5 +49,6 @@ describe('MidiTrack:addEvent', () => {
             .addEvent(new MidiEvent(MidiEvent.NOTE_OFF, 0, 1, 60, 80));
         const result = mt.isEmpty();
         expect(result).to.be.false;
+        expect(mt.isNotEmpty()).to.be.true;
     });
 });

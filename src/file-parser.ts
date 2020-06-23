@@ -14,7 +14,7 @@ export class FileParser {
 		this.checkFileHeader();
 		const filetype = this.buffer.readUInt16BE(8);	
 		const nroftracks = this.buffer.readUInt16BE(10);
-		file.ticks = this.buffer.readUInt16BE(12);
+		file.setTicks(this.buffer.readUInt16BE(12));
 		let exit = false;
 		//console.log(filetype, nroftracks,file.ticks );
 		let index2 : number|undefined = 0;
@@ -32,7 +32,7 @@ export class FileParser {
 				file.addTrack(mt);
 			}
 		}
-		console.debug('added ',file.tracks.length,' tracks');
+		console.debug('added ',file.getTracks().length,' tracks');
 		return file;
     };
     

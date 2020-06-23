@@ -38,6 +38,9 @@ export class MidiTrack {
 	public isEmpty(): boolean{
 		return this.events.length === 0;
 	}
+	public isNotEmpty(): boolean{
+		return this.events.length > 0;
+	}
 
 	/**
 	 * Add a note-on event to the track.
