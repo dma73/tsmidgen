@@ -106,7 +106,7 @@ export class MidiUtil {
      * Convert beats per minute (BPM) to microseconds per quarter note (MPQN).
      *
      * @param {number} bpm - A number in beats per minute.
-     * @returns {number} The number of microseconds per quarter note.
+     * @returns {Array<number>} The number of microseconds per quarter note.
      */
     static mpqnFromBpm(bpm: number): Array<number> {
         let mpqn = Math.floor(60000000 / bpm);
@@ -127,17 +127,18 @@ export class MidiUtil {
      * @param {number} mpqn - The number of microseconds per quarter note.
      * @returns {number} A number in beats per minute.
      */
-    /*bpmFromMpqn(mpqn: Array<number>): number {
-    var m = mpqn;
-    if (typeof mpqn[0] != 'undefined') {
-        m = 0;
-        for (var i = 0, l = mpqn.length - 1; l >= 0; ++i, --l) {
-            m |= mpqn[i] << l;
-        }
+    static bpmFromMpqn(mpqn: Array<number>): number {
+    let m = 0;
+    if(mpqn[mpqn.length - 1] === 0){
+        mpqn.splice(mpqn.length -  1, 1 );
     }
-    return Math.floor(60000000 / mpqn);
+    
+    for (var i = 0; i < mpqn.length;  ++i) {
+        m = m | mpqn[i] << ((mpqn.length-1-i) * 8);
+    }
+    return Math.floor(60000000 / m);
 }
-*/
+
 
     /**
      * Converts an array of bytes to a utf16 string.

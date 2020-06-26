@@ -41,6 +41,9 @@ export class MidiTrack {
 	public isNotEmpty(): boolean{
 		return this.events.length > 0;
 	}
+	public getEvents():Array<CommonEvent> {
+		return this.events;
+	} 
 
 	/**
 	 * Add a note-on event to the track.
@@ -59,10 +62,6 @@ export class MidiTrack {
     }
 	public addNoteOn(channel: number, pitch: string | number, time?: number, velocity?: number) {
 		let p = MidiUtil.ensureMidiPitch(pitch);
-		if (p===undefined){
-			p = 60;
-			velocity = 0;
-		}
 		this.events.push(new MidiEvent(MidiEvent.NOTE_ON, time || 0,
 			channel, p, velocity || MidiUtil.DEFAULT_VOLUME));
 		return this;
@@ -123,18 +122,13 @@ export class MidiTrack {
 	 * @returns {Track} The current track.
 	 */
 	public addChord(channel: number, chord: Array<string | number>, dur?: number, time?: number, velocity?: number) {
-		if (!Array.isArray(chord) || !chord.length) {
-			throw new Error('Chord must be an array of pitches');
-		}
-		this.chordNotesOn(chord, channel, time, velocity);
-		this.chordNotesOff(chord, channel, dur, velocity);
-		return this;
+		return this.addArpeggiatedChord(channel, chord, dur, time, 0, velocity )
 	};
-	public addArpeggiatedChord(channel: number, chord: Array<string | number>, dur: number, time: number, delay: number, up: boolean, velocity: number) {
+	public addArpeggiatedChord(channel: number, chord: Array<string | number>, dur?: number, time?: number, delay?: number, velocity?: number, reverse?: boolean) {
 		if (!Array.isArray(chord) || !chord.length) {
 			throw new Error('Chord must be an array of pitches');
 		}
-		this.arpeggiatedChordNotesOn(chord, channel, time, delay, up, velocity);
+		this.arpeggiatedChordNotesOn(chord, channel, time, delay, reverse, velocity);
 		this.chordNotesOff(chord, channel, dur, velocity);
 		return this;
 	};
@@ -150,19 +144,9 @@ export class MidiTrack {
 		}, this);
 	}
 
-	public chordNotesOn(chord: (string | number)[], channel: number, time: number | undefined, velocity: number | undefined) {
-		chord.forEach((note, index) => {
-			if (index === 0) {
-				this.noteOn(channel, note, time, velocity);
-			}
-			else {
-				this.noteOn(channel, note, 0, velocity);
-			}
-		});
-	}
-	public arpeggiatedChordNotesOn(chord: (string | number)[], channel: number, time: number | undefined, delay: number | undefined, up: boolean | undefined, velocity: number | undefined) {
-		if ( up ){
-			chord = chord.reverse()
+	public arpeggiatedChordNotesOn(chord: (string | number)[], channel: number, time: number | undefined, delay: number | undefined, reverse: boolean | undefined, velocity: number | undefined) {
+		if ( reverse ){
+			chord = chord.reverse();
 		}
 		chord.forEach((note, index) => {
 			if (index === 0) {

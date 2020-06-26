@@ -22,7 +22,7 @@ describe('TrackParser: constructor', () => {
 
 function createTestBuffer(): Buffer{
     let mt: MidiTrack = new MidiTrack();
-    mt.addArpeggiatedChord(1, ['c4','e4', 'a4','c5'], 200, 5, 10, false, 90);
+    mt.addArpeggiatedChord(1, ['c4','e4', 'a4','c5'], 200, 5, 10, 90);
     let buffer = Buffer.from(mt.toBytes().slice(4));
     return buffer
 }

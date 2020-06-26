@@ -220,3 +220,16 @@ describe('MidiUtil noteFromMidiPitch returns a node from a midi pitch, flattened
         expect(result).to.equal('db4');
     });
 });
+
+describe('MidiUtil bpmFromMpqn returns the tempo in bpm from a number array', () => {
+    let mnpq120 = [7,161,32];
+    let mnpq60000 = [3,232,0];
+    it('should reverse what mpqnFromBpm does (3 significant bytes)', () => {
+        const result = MidiUtil.bpmFromMpqn(mnpq120);
+        expect(result).to.equal(120);
+    });
+    it('should reverse what mpqnFromBpm does (2 significant bytes)', () => {
+        const result = MidiUtil.bpmFromMpqn(mnpq60000);
+        expect(result).to.equal(60000);
+    });
+});

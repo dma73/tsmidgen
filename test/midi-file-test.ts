@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import { MidiFile } from '../src/midi-file';
 import { describe, it } from 'mocha'
 import { MidiTrack } from '../src/midi-track';
+import { TestUtils } from './test-utils';
 
 describe('MidiFile: constants', () => {
     it('HDR_CHUNKID should be MThd', () => {
@@ -122,25 +123,25 @@ describe('MidiFile: setTicks - should only change the value if valid', () => {
 describe('MidiFile: toBytes - should only change the value if valid', () => {
     it('single track', () => {
         let midiFile = getSampleFile(1);
-        let hex = toHexString(midiFile.toBytes());
+        let hex = TestUtils.toHexString(midiFile.toBytes());
         expect(hex).to.equal('4d 54 68 64 00 00 00 06 00 00 00 01 00 80 4d' +
-            ' 54 72 6b 00 00 00 0d 00 91 3c 50 81 00 81 3c 50 00 ff 2f 00 ');
+            ' 54 72 6b 00 00 00 0d 00 91 3c 50 81 00 81 3c 50 00 ff 2f 00');
     })
     it('two tracks', () => {
         let midiFile = getSampleFile(2);
-        let hex = toHexString(midiFile.toBytes());
+        let hex = TestUtils.toHexString(midiFile.toBytes());
         expect(hex).to.equal('4d 54 68 64 00 00 00 06 00 01 00 02 00 80 4d' +
             ' 54 72 6b 00 00 00 0d 00 91 3c 50 81 00 81 3c 50 00 ff 2f 00 4d 54' +
-            ' 72 6b 00 00 00 0d 00 91 3c 50 81 00 81 3c 50 00 ff 2f 00 ');
+            ' 72 6b 00 00 00 0d 00 91 3c 50 81 00 81 3c 50 00 ff 2f 00');
     })
 })
 describe('MidiFile: fromBytes - reimporting exported file should return the same midi file', () => {
     it('single track file', () => {
         let midiFile = getSampleFile(1);
         let bytes = midiFile.toBytes();
-        let hex = toHexString(bytes);
+        let hex = TestUtils.toHexString(bytes);
         let midiFile2 = MidiFile.fromBytes(Buffer.from(bytes, 'binary'));
-        let hex2 = toHexString(midiFile2.toBytes());
+        let hex2 = TestUtils.toHexString(midiFile2.toBytes());
         expect(hex2).to.equal(hex);
     })
 })
@@ -181,10 +182,3 @@ function getSampleFileWithEmptyTracks(tracks: number, emptyTracks: number): Midi
     }
     return midiFile;
 }
-function toHexString(input: string): string {
-    let hex = '';
-    Buffer.from(input, 'binary').forEach((value) => {
-        hex += (value.toString(16).length === 1 ? 0 + value.toString(16) : value.toString(16)) + ' ';
-    });
-    return hex;
-} 
