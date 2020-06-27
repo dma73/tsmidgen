@@ -45,7 +45,7 @@ export class MidiUtil {
         if (typeof p === 'number') {
             // numeric pitch
             rv = p;
-        } else if (typeof p === 'string') {
+        } else {
             rv = this.getPitchNumber(p);
         }
         return rv;
@@ -166,11 +166,10 @@ export class MidiUtil {
      * @returns {Array} An array of nibbles.
      */
     static str2Bytes(str: string, finalBytes: number): Array<number> {
-        str = MidiUtil.padBytes(finalBytes, str);
-
         let bytes = [];
+        str = MidiUtil.padBytes(finalBytes, str);
         for (let i = str.length - 1; i >= 0; i = i - 2) {
-            let chars = i === 0 ? str[i] : str[i - 1] + str[i];
+            let chars = (i === 0 ? str[i] : str[i - 1] + str[i]);
             bytes.unshift(parseInt(chars, 16));
         }
         return bytes;

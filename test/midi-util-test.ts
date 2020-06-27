@@ -91,10 +91,18 @@ describe('MidiUtil str2Bytes returns a byte array from a hex string, padded to t
         expect(result[0]).to.equal(0);
     });
     it('Bytes should be correct', () => {
+        const result = MidiUtil.str2Bytes('F', 0);
+        expect(result[0]).to.equal(15);
+    });
+    it('Bytes should be correct', () => {
         const result = MidiUtil.str2Bytes('0088FF', 3);
         expect(result[0]).to.equal(0);
         expect(result[1]).to.equal(136);
         expect(result[2]).to.equal(255);
+    });
+    it('Bytes : empty string should return empty byte array', () => {
+        const result = MidiUtil.str2Bytes('', 0);
+        expect(result.length).to.equal(0);
     });
 });
 describe('MidiUtil codes2Str returns utf 16 string from a byte array', () => {
@@ -219,6 +227,11 @@ describe('MidiUtil noteFromMidiPitch returns a node from a midi pitch, flattened
         const result = MidiUtil.noteFromMidiPitch(61, true);
         expect(result).to.equal('db4');
     });
+    it('12 should return c0', () => {
+        const result = MidiUtil.noteFromMidiPitch(12,false);
+        expect(result).to.equal('c0');
+    });
+
 });
 
 describe('MidiUtil bpmFromMpqn returns the tempo in bpm from a number array', () => {
