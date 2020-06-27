@@ -19,9 +19,7 @@ export class MidiTrack {
 	 */
 	constructor(config?: MidiTrack ) {
 		if (config){
-            if (config.events){
-                this.events = config.events;
-            }
+            this.events = config.events;
         }
 	}
 

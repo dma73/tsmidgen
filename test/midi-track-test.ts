@@ -75,6 +75,24 @@ describe('MidiTrack:addNote/note', () => {
         expect(result3.time[0]).to.equal(MidiUtil.translateTickTime(128)[0]);
         expect(result3.param2).to.equal(80);
     });
+    it('addNote: addNote default values', () => {
+        let mt = new MidiTrack();
+        mt.addNote(1, 30);
+        const result = mt.isNotEmpty();
+        expect(result).to.be.true;
+        const result2 = mt.getEvents()[0] as MidiEvent;
+        expect(result2.type).to.equal(MidiEvent.NOTE_ON);
+        expect(result2.param1).to.equal(30);
+        expect(result2.channel).to.equal(1);
+        expect(result2.time[0]).to.equal(MidiUtil.translateTickTime(0)[0]);
+        expect(result2.param2).to.equal(MidiUtil.DEFAULT_VOLUME);
+        const result3 = mt.getEvents()[1] as MidiEvent;
+        expect(result3.type).to.equal(MidiEvent.NOTE_OFF);
+        expect(result3.param1).to.equal(30);
+        expect(result3.time[0]).to.equal(MidiUtil.translateTickTime(0)[0]);
+        expect(result3.param2).to.equal(MidiUtil.DEFAULT_VOLUME);
+        expect(result3.channel).to.equal(1);
+    });
     it('note should do the exact thing as addNote', () => {
         const mt = new MidiTrack();
         const mt2 = new MidiTrack();
@@ -183,6 +201,11 @@ describe('MidiTrack:bytes() alias to toBytes()', () => {
         let result = TestUtils.bytesToHexString(midiTrack.bytes());
         expect(result).to.equal(expected);
     });
+    it('toBytes: empty track should return empty array', () => {
+
+        let midiTrack = new MidiTrack();
+        expect(midiTrack.toBytes().length).to.equal(0);
+    });
 });
 describe('MidiTrack:chord() alias to addChord()', () => {
 
@@ -216,6 +239,21 @@ describe('MidiTrack:setTempo()', () => {
        
     });
 
+     it('setTempo: default time should be zero', () => {
+        let mpqn120 = [7,161,32];
+        let mt = new MidiTrack();
+        mt.setTempo(120);
+        const result = mt.isNotEmpty();
+        expect(result, 'event should be added').to.be.true;
+        let result2 = mt.getEvents()[0] as MetaEvent;
+        expect(result2.type, 'MetaEvent type should be TEMPO').to.equal(MetaEvent.TEMPO);
+        let data: number[] = (result2.data && isArray(result2.data) ? result2.data : [] );
+        let value = TestUtils.bytesToHexString(data);
+        let expected = TestUtils.bytesToHexString(mpqn120);
+        expect(value, 'Mpqn value should be correct').to.equal(expected);
+        expect(result2.time[0], 'Time Should be 0').to.equal(MidiUtil.translateTickTime(0)[0]);
+       
+    });
     it('setTempo: tempo should be an alias to setTempo', () => {
 
         let midiTrack = new MidiTrack();
@@ -225,6 +263,20 @@ describe('MidiTrack:setTempo()', () => {
         let expected = TestUtils.bytesToHexString(midiTrack.toBytes());
         let result = TestUtils.bytesToHexString(midiTrack2.toBytes());
         expect(result).to.equal(expected);
+    });
+    it('setTempo: default time should be zero', () => {
+        let mpqn120 = [7,161,32];
+        let mt = new MidiTrack();
+        mt.setTempo(120);
+        const result = mt.isNotEmpty();
+        expect(result, 'event should be added').to.be.true;
+        let result2 = mt.getEvents()[0] as MetaEvent;
+        expect(result2.type, 'MetaEvent type should be TEMPO').to.equal(MetaEvent.TEMPO);
+        let data: number[] = (result2.data && isArray(result2.data) ? result2.data : [] );
+        let value = TestUtils.bytesToHexString(data);
+        let expected = TestUtils.bytesToHexString(mpqn120);
+        expect(value, 'Mpqn value should be correct').to.equal(expected);
+        expect(result2.time[0], 'Time Should be 0').to.equal(MidiUtil.translateTickTime(0)[0]);
     });
 });
 
@@ -241,6 +293,18 @@ describe('MidiTrack:setInstrument()', () => {
         expect(result2.channel, 'Channel value should be correct').to.equal(1);
         expect(result2.time[0], 'Time Should be correct').to.equal(MidiUtil.translateTickTime(30)[0]);
     });
+    it('setInstrument: default values default time = 0' , () => {
+        let mt = new MidiTrack();
+        mt.setInstrument(1,55);
+        const result = mt.isNotEmpty();
+        expect(result, 'event should be added').to.be.true;
+        let result2 = mt.getEvents()[0] as MidiEvent;
+        expect(result2.type, 'MidiEvent type should be PROGRAM_CHANGE').to.equal(MidiEvent.PROGRAM_CHANGE);
+        expect(result2.param1, 'Instrument value should be correct').to.equal(55);
+        expect(result2.param2, 'Second parameter shoud be 0').to.equal(0);
+        expect(result2.channel, 'Channel value should be correct').to.equal(1);
+        expect(result2.time[0], 'Time Should be correct').to.equal(MidiUtil.translateTickTime(0)[0]);
+    });
 
     it('setInstrument: instrument should be an alias to setInstrument', () => {
         let midiTrack = new MidiTrack();
@@ -253,9 +317,17 @@ describe('MidiTrack:setInstrument()', () => {
     });
 });
 
-
-function getSampleTrack(): MidiTrack {
-    let track = new MidiTrack();
-    track.addNote(1, 60, 128, 0, 80);
-    return track;
-}
+describe('MidiTrack:addNoteOn()', () => {
+    it('addNoteOn: default values should be properly handled' , () => {
+        let mt = new MidiTrack();
+        mt.addNoteOn(1,55);
+        const result = mt.isNotEmpty();
+        expect(result).to.be.true;
+        let result2 = mt.getEvents()[0] as MidiEvent;
+        expect(result2.type, 'note on').to.equal(MidiEvent.NOTE_ON);
+        expect(result2.channel, 'incorrect channel').to.equal(1);
+        expect(result2.param1, 'incorrect pitch').to.equal(55);
+        expect(result2.time[0], 'incorrect time').to.equal(MidiUtil.translateTickTime(0)[0]);
+        expect(result2.param2, 'incorrect velocity').to.equal(MidiUtil.DEFAULT_VOLUME);
+    });
+});
