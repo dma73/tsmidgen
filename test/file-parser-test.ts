@@ -36,10 +36,17 @@ describe('FileParser: parse', () => {
         let buffer = Buffer.from(mf.toBytes() ,'binary');
         expect(buffer.toString()).to.equal(createTestBuffer().toString());
     });
+    it('unexpected bytes are ignored', () => {
+        const emptyTrack = [0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x05, 0x00, 0x00, 0xFF, 0x2F, 0x00];
+        let originalBuffer = createTestBuffer(emptyTrack);
+        let fp = new FileParser(originalBuffer);
+        let mf = fp.parseFile();
+        let buffer = Buffer.from(mf.toBytes() ,'binary');
+        expect(buffer.toString()).to.equal(createTestBuffer().toString());
+    });
 });
 
 function createTestBuffer(additionalData?: number[]): Buffer{
-    const EmptyTrack = [0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x04, 0x00, 0xFF, 0x2F, 0x00];
     let mf = new MidiFile();
     let mt = new MidiTrack();
     let ad = '';
@@ -67,4 +74,4 @@ function toHexString(input: string):string{
         hex += (value.toString(16).length === 1 ? 0 + value.toString(16) : value.toString(16)) + ' ';
     });
     return hex;
-} 
+}

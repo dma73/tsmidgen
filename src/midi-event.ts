@@ -9,7 +9,6 @@ export class MidiEvent extends CommonEvent {
 	public static readonly PROGRAM_CHANGE = 0xC0;
 	public static readonly CHANNEL_AFTERTOUCH = 0xD0;
 	public static readonly PITCH_BEND = 0xE0;
-	public static readonly IGNORE = 0xF0;
 
 	channel: number = 1;
 	param1: number | undefined;
@@ -24,7 +23,7 @@ export class MidiEvent extends CommonEvent {
 		this.setChannel(channel);
 		this.setParam1(param1);
 		this.setParam2(param2);
-		
+
 	};
 
 	private populateEventTypes() {
@@ -34,9 +33,7 @@ export class MidiEvent extends CommonEvent {
 		this.eventTypes.set(MidiEvent.NOTE_OFF, 2);
 		this.eventTypes.set(MidiEvent.CONTROLLER, 2);
 		this.eventTypes.set(MidiEvent.AFTER_TOUCH, 2);
-		this.eventTypes.set(MidiEvent.PROGRAM_CHANGE, 1);
 		this.eventTypes.set(MidiEvent.PITCH_BEND, 2);
-		this.eventTypes.set(MidiEvent.IGNORE, 0);
 	}
 
 	/**
@@ -51,14 +48,9 @@ export class MidiEvent extends CommonEvent {
 		}
 		this.type = type;
 	};
-	isValidType(type: number): boolean{
+	isValidType(type: number): boolean {
 		return this.eventTypes.get(type) !== undefined;
 	}
-	isExportable(): boolean{
-		const args = this.eventTypes.get(this.type);
-		return ( args!== undefined  && (args > 0));
-	}
-
 	/**
 	 * Set the channel for the event. Must be between 0 and 15, inclusive.
 	 *
@@ -98,13 +90,12 @@ export class MidiEvent extends CommonEvent {
 	 */
 	toBytes(): number[] {
 		var byteArray: number[] = [];
-		if (this.isExportable()) {
-			var typeChannelByte = this.getTypeChannelByte();
-			byteArray.push.apply(byteArray, this.time);
-			byteArray.push(typeChannelByte);
-			MidiEvent.pushIfNotNullOrUndefined(this.param1, byteArray);
-			MidiEvent.pushIfNotNullOrUndefined(this.param2, byteArray);
-		}
+		var typeChannelByte = this.getTypeChannelByte();
+		byteArray.push.apply(byteArray, this.time);
+		byteArray.push(typeChannelByte);
+		MidiEvent.pushIfNotNullOrUndefined(this.param1, byteArray);
+		MidiEvent.pushIfNotNullOrUndefined(this.param2, byteArray);
+
 		return byteArray;
 	};
 	static pushIfNotNullOrUndefined(arg: number | undefined | null, byteArray: number[]) {

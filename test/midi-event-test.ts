@@ -21,11 +21,7 @@ describe('MetaEvent: setChannel()', () => {
      });
 });
 
-describe('MetaEvent: toBytes()', () => {
-    it('toBytes : MidiEvent.IGNORE Events should not be exported', () => {
-       let midiEvent = new MidiEvent(MidiEvent.IGNORE,0,0,0,0);
-        expect(midiEvent.toBytes().length).to.equal(0);
-    });
+describe('MidiEvent: toBytes()', () => {
     it('toBytes : Other valid events should be exported', () => {
         let midiEvent = new MidiEvent(MidiEvent.NOTE_ON,0,1,60,80);
          expect(midiEvent.toBytes().length).to.equal(4);

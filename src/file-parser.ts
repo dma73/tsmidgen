@@ -23,7 +23,7 @@ export class FileParser {
 			index2 = this.buffer.indexOf('MTrk',index + 4);
 			let index3 = this.buffer.indexOf(new Uint8Array(MidiTrack.END_BYTES),index);
 			let trackData: Buffer;
-			trackData = this.buffer.subarray(index + 4, index3);
+			trackData = this.buffer.subarray(index + 4, index3 + 4);
             if (index2 <= index){
 				exit = true;
 			}
