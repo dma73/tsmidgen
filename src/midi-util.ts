@@ -70,20 +70,17 @@ export class MidiUtil {
      * notes to sharpened ones. Optional, default false.
      * @returns {string} The resulting symbolic note name.
      */
-    static noteFromMidiPitch(n: number, returnFlattened?: boolean): string {
+    static noteFromMidiPitch(n: number, returnFlattened?: boolean, skipOctave?: boolean): string {
         let octave = 0;
         let noteNum = n;
         let noteName = '';
         returnFlattened = returnFlattened || false;
-        if (n > 23) {
-            // noteNum is on octave 1 or more
-            octave = Math.floor(n / 12) - 1;
-            // subtract number of octaves from noteNum
-            noteNum = n - octave * 12;
-        }
+        if (n < 0) n = 0;
+        octave = Math.floor(n / 12) - 1;
+        noteNum = n - octave * 12;
         // get note name (c#, d, f# etc)
         noteName = MidiUtil.getNoteName(noteNum, returnFlattened);
-        return noteName + octave;
+        return noteName + (skipOctave ? '' : octave);
     }
 
     static getNoteName(noteNum: number, returnFlattened: boolean): string {

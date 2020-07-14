@@ -231,6 +231,18 @@ describe('MidiUtil noteFromMidiPitch returns a node from a midi pitch, flattened
         const result = MidiUtil.noteFromMidiPitch(12,false);
         expect(result).to.equal('c0');
     });
+    it('0 should return c-1', () => {
+        const result = MidiUtil.noteFromMidiPitch(0,false);
+        expect(result).to.equal('c-1');
+    });
+    it('Lower than 0 should return lowest note : c-1', () => {
+        const result = MidiUtil.noteFromMidiPitch(-1,false);
+        expect(result).to.equal('c-1');
+    });
+    it('Skip oactave should only get the note name : c', () => {
+        const result = MidiUtil.noteFromMidiPitch(12,false,true);
+        expect(result).to.equal('c');
+    });
 
 });
 
